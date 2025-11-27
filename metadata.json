@@ -1,0 +1,5 @@
+{
+  "name": "Biblical Selfie Generator",
+  "description": "Upload a selfie and virtually travel back in time to take a photo with your favorite Bible characters using Gemini 2.5 Flash Image technology.",
+  "requestFramePermissions": []
+}
