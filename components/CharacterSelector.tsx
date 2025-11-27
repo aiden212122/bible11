@@ -24,15 +24,20 @@ const CharacterSelector: React.FC<CharacterSelectorProps> = ({
   };
 
   const handlePredefinedSelect = (char: BibleCharacter) => {
-    setIsCustomMode(false);
-    onCustomCharacterChange(''); // Clear custom input
-    onSelectCharacter(char.name);
+    // If clicking the already selected character, deselect it
+    if (selectedCharacter === char.name && !isCustomMode) {
+      onSelectCharacter('');
+    } else {
+      setIsCustomMode(false);
+      onCustomCharacterChange(''); // Clear custom input
+      onSelectCharacter(char.name);
+    }
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-12">
+    <div className="w-full max-w-4xl mx-auto mb-10">
       <h2 className="font-serif text-2xl text-bible-dark mb-6 border-l-4 border-bible-gold pl-3">
-        2. Choose a Companion
+        2. Choose a Companion (Optional)
       </h2>
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

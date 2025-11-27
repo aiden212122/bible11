@@ -8,7 +8,7 @@ const Header: React.FC = () => {
           Biblical Snapshot
         </h1>
         <p className="font-sans text-sm md:text-lg text-gray-300 max-w-2xl">
-          Upload your selfie and let AI transport you to a moment with history's most revered figures.
+          Upload your selfie and let AI transport you to a moment with history's most revered figures, or simply apply divine edits to your photos.
         </p>
       </div>
     </header>

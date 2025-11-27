@@ -15,18 +15,26 @@ export const generateCompositeImage = async (
     const mimeType = imageFile.type;
 
     // Construct the prompt
-    // We want to edit the image to add the character.
-    // gemini-2.5-flash-image is capable of editing/infilling based on visual and text prompts.
-    const promptText = `
-      Edit this image to include ${characterName} from the Bible standing next to the person in the photo.
-      
-      Style guidelines:
-      1. Keep the original person's appearance, lighting, and background consistent where possible, or blend them into a historical biblical setting if it fits better.
-      2. ${characterName} should be depicted in a respectful, historically inspired manner typical of biblical art (robes, period-appropriate attire).
-      3. The interaction should look natural, like a friendly photo or a respectful meeting.
-      4. High quality, photorealistic, cinematic lighting.
-      ${additionalPrompt ? `5. Additional User Request: ${additionalPrompt}` : ''}
-    `;
+    let promptText = "";
+
+    if (characterName) {
+      // Logic for adding a character
+      promptText = `
+        Edit this image to include ${characterName} from the Bible standing next to the person in the photo.
+        
+        Style guidelines:
+        1. Keep the original person's appearance, lighting, and background consistent where possible, or blend them into a historical biblical setting if it fits better.
+        2. ${characterName} should be depicted in a respectful, historically inspired manner typical of biblical art (robes, period-appropriate attire).
+        3. The interaction should look natural, like a friendly photo or a respectful meeting.
+        4. High quality, photorealistic, cinematic lighting.
+        ${additionalPrompt ? `5. Additional User Instruction: ${additionalPrompt}` : ''}
+      `;
+    } else if (additionalPrompt) {
+      // Logic for purely editing the image (no specific character insertion mandated)
+      promptText = additionalPrompt;
+    } else {
+      throw new Error("No instructions provided. Please select a character or enter a custom edit.");
+    }
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',

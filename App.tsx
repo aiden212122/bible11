@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from './components/Header';
 import UploadSection from './components/UploadSection';
 import CharacterSelector from './components/CharacterSelector';
+import EditInstructions from './components/EditInstructions';
 import ResultDisplay from './components/ResultDisplay';
 import { generateCompositeImage } from './services/geminiService';
 
@@ -12,6 +13,9 @@ const App: React.FC = () => {
   // Character state
   const [selectedCharacter, setSelectedCharacter] = useState<string>('');
   const [customCharacter, setCustomCharacter] = useState<string>('');
+  
+  // Edit instruction state
+  const [editInstruction, setEditInstruction] = useState<string>('');
   
   // Generation state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -33,7 +37,7 @@ const App: React.FC = () => {
   };
 
   const handleGenerate = async () => {
-    if (!selectedFile || !selectedCharacter) {
+    if (!selectedFile || (!selectedCharacter && !editInstruction)) {
       return;
     }
 
@@ -42,7 +46,7 @@ const App: React.FC = () => {
     setShowResult(true);
 
     try {
-      const result = await generateCompositeImage(selectedFile, selectedCharacter);
+      const result = await generateCompositeImage(selectedFile, selectedCharacter, editInstruction);
       setGeneratedImage(result);
     } catch (err: any) {
       setError(err.message || "Something went wrong during the divine process.");
@@ -53,11 +57,10 @@ const App: React.FC = () => {
 
   const handleCloseResult = () => {
     setShowResult(false);
-    // If successful, we might want to keep generatedImage in state but hide modal, 
-    // or clear it. Let's keep it but hide modal allows user to tweak and regen.
   };
 
-  const isReadyToGenerate = !!selectedFile && !!selectedCharacter;
+  // Ready if file is selected AND (character is selected OR edit instruction is provided)
+  const isReadyToGenerate = !!selectedFile && (!!selectedCharacter || !!editInstruction);
 
   return (
     <div className="min-h-screen bg-bible-cream text-bible-dark pb-20 font-sans">
@@ -87,6 +90,11 @@ const App: React.FC = () => {
             onCustomCharacterChange={setCustomCharacter}
           />
 
+          <EditInstructions 
+            value={editInstruction} 
+            onChange={setEditInstruction} 
+          />
+
           {/* Action Area */}
           <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-lg z-40 md:relative md:bg-transparent md:border-none md:shadow-none md:p-0 md:mt-8 md:mb-20">
             <div className="max-w-5xl mx-auto flex justify-center">
@@ -104,6 +112,11 @@ const App: React.FC = () => {
                 {isGenerating ? 'Generating...' : 'Generate Photo'}
               </button>
             </div>
+            {!isReadyToGenerate && selectedFile && (
+              <p className="text-center text-xs text-red-400 mt-2 md:hidden">
+                Select a character or add an edit instruction.
+              </p>
+            )}
           </div>
 
         </div>
